@@ -1,0 +1,92 @@
+[
+  {
+    "question": "Which command displays the current directory?",
+    "options": {"A": "ls", "B": "pwd", "C": "cd", "D": "mkdir"},
+    "answer": "B",
+    "explanation": "pwd -> Print Working Directory"
+  },
+  {
+    "question": "Which command lists the files in a directory?",
+    "options": {"A": "ls", "B": "cat", "C": "find", "D": "cd"},
+    "answer": "A",
+    "explanation": "ls -> List"
+  },
+  {
+    "question": "Which command changes your current directory?",
+    "options": {"A": "pwd", "B": "mv", "C": "cd", "D": "cp"},
+    "answer": "C",
+    "explanation": "cd -> Change Directory"
+  },
+  {
+    "question": "Which command creates a new directory?",
+    "options": {"A": "touch", "B": "mkdir", "C": "rmdir", "D": "rm"},
+    "answer": "B",
+    "explanation": "mkdir -> Make Directory"
+  },
+  {
+    "question": "Which command removes an EMPTY directory?",
+    "options": {"A": "rm", "B": "rmdir", "C": "mkdir", "D": "mv"},
+    "answer": "B",
+    "explanation": "rmdir only works on empty directories."
+  },
+  {
+    "question": "Which command creates a new empty file?",
+    "options": {"A": "touch", "B": "cat", "C": "find", "D": "grep"},
+    "answer": "A",
+    "explanation": "touch creates a file if it doesn't exist."
+  },
+  {
+    "question": "Which command copies a file?",
+    "options": {"A": "mv", "B": "cp", "C": "rm", "D": "cd"},
+    "answer": "B",
+    "explanation": "cp -> Copy"
+  },
+  {
+    "question": "Which command moves or renames a file?",
+    "options": {"A": "cp", "B": "rm", "C": "mv", "D": "ls"},
+    "answer": "C",
+    "explanation": "mv -> Move / Rename"
+  },
+  {
+    "question": "Which command permanently deletes a file?",
+    "options": {"A": "rm", "B": "rmdir", "C": "mv", "D": "touch"},
+    "answer": "A",
+    "explanation": "rm -> Remove (no recycle bin!)"
+  },
+  {
+    "question": "Which command prints a file's entire contents?",
+    "options": {"A": "head", "B": "tail", "C": "cat", "D": "grep"},
+    "answer": "C",
+    "explanation": "cat -> Concatenate (and print)"
+  },
+  {
+    "question": "Which command shows the FIRST lines of a file?",
+    "options": {"A": "head", "B": "tail", "C": "cat", "D": "find"},
+    "answer": "A",
+    "explanation": "head shows the top of a file (10 lines by default)."
+  },
+  {
+    "question": "Which command shows the LAST lines of a file?",
+    "options": {"A": "head", "B": "tail", "C": "cat", "D": "grep"},
+    "answer": "B",
+    "explanation": "tail shows the end of a file (10 lines by default)."
+  },
+  {
+    "question": "Which command searches inside files for matching text?",
+    "options": {"A": "find", "B": "grep", "C": "ls", "D": "cd"},
+    "answer": "B",
+    "explanation": "grep -> Global Regular Expression Print"
+  },
+  {
+    "question": "Which command searches a directory tree for files by name?",
+    "options": {"A": "grep", "B": "cat", "C": "find", "D": "touch"},
+    "answer": "C",
+    "explanation": "find searches for files matching criteria like name or type."
+  },
+  {
+    "question": "Which command changes a file's read/write/execute permissions?",
+    "options": {"A": "chmod", "B": "chown", "C": "sudo", "D": "cp"},
+    "answer": "A",
+    "explanation": "chmod -> Change Mode"
+  }
+]

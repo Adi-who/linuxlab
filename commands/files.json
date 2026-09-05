@@ -1,0 +1,141 @@
+[
+  {
+    "command": "mkdir",
+    "category": "Files & Directories",
+    "meaning": "Make Directory",
+    "description": "Creates a new, empty directory (folder) at the given path.",
+    "syntax": "mkdir [directory]",
+    "examples": [
+      "mkdir projects"
+    ],
+    "related": ["rmdir", "ls"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "rmdir",
+    "category": "Files & Directories",
+    "meaning": "Remove Directory",
+    "description": "Deletes a directory, but only if it is empty. For directories with contents, use 'rm -r' instead.",
+    "syntax": "rmdir [directory]",
+    "examples": [
+      "rmdir old_folder"
+    ],
+    "related": ["mkdir", "rm"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "touch",
+    "category": "Files & Directories",
+    "meaning": "Create empty file / update timestamp",
+    "description": "Creates a new empty file if it doesn't exist, or updates its 'last modified' timestamp if it does.",
+    "syntax": "touch [filename]",
+    "examples": [
+      "touch notes.txt"
+    ],
+    "related": ["cat", "ls"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "cp",
+    "category": "Files & Directories",
+    "meaning": "Copy",
+    "description": "Copies a file or directory from one location to another. Use -r to copy directories recursively.",
+    "syntax": "cp [source] [destination]",
+    "examples": [
+      "cp notes.txt backup.txt",
+      "cp -r project/ project_backup/"
+    ],
+    "related": ["mv", "rm"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "mv",
+    "category": "Files & Directories",
+    "meaning": "Move / Rename",
+    "description": "Moves a file or directory to a new location. Also used to rename files, since renaming is just 'moving' to a new name.",
+    "syntax": "mv [source] [destination]",
+    "examples": [
+      "mv notes.txt archive/",
+      "mv old_name.txt new_name.txt"
+    ],
+    "related": ["cp", "rm"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "rm",
+    "category": "Files & Directories",
+    "meaning": "Remove",
+    "description": "Deletes files permanently. There is no recycle bin, so use with care. Use -r for directories.",
+    "syntax": "rm [filename]",
+    "examples": [
+      "rm notes.txt",
+      "rm -r old_folder/"
+    ],
+    "related": ["rmdir", "mv"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "cat",
+    "category": "File Management",
+    "meaning": "Concatenate",
+    "description": "Prints the entire contents of a file to the screen. Great for quickly viewing small text files.",
+    "syntax": "cat [filename]",
+    "examples": [
+      "cat notes.txt"
+    ],
+    "related": ["head", "tail"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "head",
+    "category": "File Management",
+    "meaning": "Show the top of a file",
+    "description": "Displays the first lines of a file (10 by default). Useful for peeking at large files without opening them fully.",
+    "syntax": "head [filename]",
+    "examples": [
+      "head notes.txt",
+      "head -n 5 notes.txt"
+    ],
+    "related": ["cat", "tail"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "tail",
+    "category": "File Management",
+    "meaning": "Show the end of a file",
+    "description": "Displays the last lines of a file (10 by default). Commonly used to watch the end of log files.",
+    "syntax": "tail [filename]",
+    "examples": [
+      "tail notes.txt",
+      "tail -n 5 notes.txt"
+    ],
+    "related": ["cat", "head"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "grep",
+    "category": "File Management",
+    "meaning": "Global Regular Expression Print",
+    "description": "Searches inside files for lines that match a pattern of text. One of the most useful search tools in Linux.",
+    "syntax": "grep [pattern] [filename]",
+    "examples": [
+      "grep \"error\" logfile.txt",
+      "grep -r \"TODO\" ."
+    ],
+    "related": ["find", "cat"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "find",
+    "category": "File Management",
+    "meaning": "Find files",
+    "description": "Searches a directory tree for files and directories matching criteria such as name or type.",
+    "syntax": "find [path] -name [pattern]",
+    "examples": [
+      "find . -name \"*.txt\"",
+      "find /home -type d"
+    ],
+    "related": ["grep", "ls"],
+    "difficulty": "beginner"
+  }
+]

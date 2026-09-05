@@ -1,0 +1,42 @@
+[
+  {
+    "command": "pwd",
+    "category": "Navigation",
+    "meaning": "Print Working Directory",
+    "description": "Shows the full path of the directory you are currently standing in. Think of it as asking the terminal, 'Where am I right now?'",
+    "syntax": "pwd",
+    "examples": [
+      "pwd"
+    ],
+    "related": ["ls", "cd"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "ls",
+    "category": "Navigation",
+    "meaning": "List",
+    "description": "Lists the files and directories inside your current location. Add -l for details, -a to show hidden files.",
+    "syntax": "ls [options] [directory]",
+    "examples": [
+      "ls",
+      "ls -la",
+      "ls Documents"
+    ],
+    "related": ["pwd", "cd"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "cd",
+    "category": "Navigation",
+    "meaning": "Change Directory",
+    "description": "Moves you from one directory to another. 'cd ..' goes up one level, 'cd ~' goes to your home directory.",
+    "syntax": "cd [directory]",
+    "examples": [
+      "cd Documents",
+      "cd ..",
+      "cd ~"
+    ],
+    "related": ["pwd", "ls"],
+    "difficulty": "beginner"
+  }
+]

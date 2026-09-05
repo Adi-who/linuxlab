@@ -1,0 +1,15 @@
+[
+  {
+    "command": "chmod",
+    "category": "Permissions",
+    "meaning": "Change Mode",
+    "description": "Changes who can read, write, or execute a file. Permissions are often given as three digits (owner, group, others), e.g. 755.",
+    "syntax": "chmod [permissions] [filename]",
+    "examples": [
+      "chmod 755 script.sh",
+      "chmod +x script.sh"
+    ],
+    "related": ["ls"],
+    "difficulty": "beginner"
+  }
+]

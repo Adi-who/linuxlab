@@ -1,0 +1,5 @@
+# LinuxLab V0.1 uses only the Python standard library.
+# No external dependencies are required yet.
+#
+# Planned for a later version:
+# rich>=13.0.0   # for a more polished terminal interface
