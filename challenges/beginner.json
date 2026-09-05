@@ -1,0 +1,99 @@
+[
+  {
+    "id": "files-1",
+    "title": "Starter Project",
+    "difficulty": "beginner",
+    "xp": 40,
+    "mission": "Create this structure:",
+    "tree": "project/\n├── src/\n├── docs/\n└── README.md",
+    "setup": [],
+    "hints": [
+      "mkdir creates folders. touch creates empty files.",
+      "Try: mkdir project && then mkdir project/src",
+      "touch project/README.md creates the file."
+    ],
+    "checks": [
+      {"type": "dir", "path": "project"},
+      {"type": "dir", "path": "project/src"},
+      {"type": "dir", "path": "project/docs"},
+      {"type": "file", "path": "project/README.md"}
+    ]
+  },
+  {
+    "id": "files-2",
+    "title": "Backup Notes",
+    "difficulty": "beginner",
+    "xp": 40,
+    "mission": "Move documents/notes.txt into backups/.",
+    "tree": "documents/notes.txt  ->  backups/notes.txt",
+    "setup": [
+      {"path": "documents", "type": "dir"},
+      {"path": "backups", "type": "dir"},
+      {"path": "documents/notes.txt", "type": "file", "content": "remember to practice linux\n"}
+    ],
+    "hints": [
+      "mv source destination",
+      "mv documents/notes.txt backups/"
+    ],
+    "checks": [
+      {"type": "file", "path": "backups/notes.txt"},
+      {"type": "missing", "path": "documents/notes.txt"},
+      {"type": "content", "path": "backups/notes.txt", "contains": "practice linux"}
+    ]
+  },
+  {
+    "id": "files-3",
+    "title": "Empty Drafts",
+    "difficulty": "beginner",
+    "xp": 30,
+    "mission": "Create two empty files: draft.txt and todo.txt in a folder named notes.",
+    "setup": [],
+    "hints": [
+      "mkdir notes first.",
+      "touch notes/draft.txt notes/todo.txt"
+    ],
+    "checks": [
+      {"type": "dir", "path": "notes"},
+      {"type": "file", "path": "notes/draft.txt"},
+      {"type": "file", "path": "notes/todo.txt"},
+      {"type": "file_count", "path": "notes", "count": 2}
+    ]
+  },
+  {
+    "id": "files-4",
+    "title": "Copy Then Rename",
+    "difficulty": "beginner",
+    "xp": 35,
+    "mission": "Copy report.txt to report.bak, then rename report.txt to report-final.txt.",
+    "setup": [
+      {"path": "report.txt", "type": "file", "content": "quarterly summary\n"}
+    ],
+    "hints": [
+      "cp copies. mv also renames.",
+      "cp report.txt report.bak then mv report.txt report-final.txt"
+    ],
+    "checks": [
+      {"type": "file", "path": "report.bak"},
+      {"type": "file", "path": "report-final.txt"},
+      {"type": "missing", "path": "report.txt"}
+    ]
+  },
+  {
+    "id": "files-5",
+    "title": "Clean the Trash",
+    "difficulty": "beginner",
+    "xp": 30,
+    "mission": "Delete junk.log and remove the empty folder named tmp.",
+    "setup": [
+      {"path": "junk.log", "type": "file", "content": "noise\n"},
+      {"path": "tmp", "type": "dir"}
+    ],
+    "hints": [
+      "rm deletes files. rmdir deletes empty folders."
+    ],
+    "checks": [
+      {"type": "missing", "path": "junk.log"},
+      {"type": "missing", "path": "tmp"}
+    ]
+  }
+]

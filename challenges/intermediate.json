@@ -1,0 +1,87 @@
+[
+  {
+    "id": "files-6",
+    "title": "Write a README",
+    "difficulty": "intermediate",
+    "xp": 50,
+    "mission": "Create docs/README.md containing the word LinuxLab.",
+    "setup": [],
+    "hints": [
+      "mkdir docs, then echo LinuxLab > docs/README.md"
+    ],
+    "checks": [
+      {"type": "dir", "path": "docs"},
+      {"type": "file", "path": "docs/README.md"},
+      {"type": "content", "path": "docs/README.md", "contains": "LinuxLab"}
+    ]
+  },
+  {
+    "id": "files-7",
+    "title": "Nested Workspace",
+    "difficulty": "intermediate",
+    "xp": 55,
+    "mission": "Build app/src/main.py and app/tests/test_main.py as empty files.",
+    "setup": [],
+    "hints": [
+      "mkdir -p creates nested folders in one step.",
+      "mkdir -p app/src app/tests then touch the two files."
+    ],
+    "checks": [
+      {"type": "dir", "path": "app"},
+      {"type": "dir", "path": "app/src"},
+      {"type": "dir", "path": "app/tests"},
+      {"type": "file", "path": "app/src/main.py"},
+      {"type": "file", "path": "app/tests/test_main.py"}
+    ]
+  },
+  {
+    "id": "files-8",
+    "title": "Make it Executable",
+    "difficulty": "intermediate",
+    "xp": 50,
+    "mission": "Create run.sh and set its permissions to 755.",
+    "setup": [],
+    "hints": [
+      "touch run.sh then chmod 755 run.sh"
+    ],
+    "checks": [
+      {"type": "file", "path": "run.sh"},
+      {"type": "permissions", "path": "run.sh", "mode": "755"}
+    ]
+  },
+  {
+    "id": "files-9",
+    "title": "Log Hunt",
+    "difficulty": "intermediate",
+    "xp": 45,
+    "mission": "A log file already exists. Copy every matching idea: create found.txt containing the word error (copy from app.log using your own commands, then write found.txt).",
+    "setup": [
+      {"path": "app.log", "type": "file", "content": "info ok\nerror disk full\ninfo done\n"}
+    ],
+    "hints": [
+      "Use grep to inspect app.log, then echo error > found.txt or recreate the matching line."
+    ],
+    "checks": [
+      {"type": "file", "path": "found.txt"},
+      {"type": "content", "path": "found.txt", "contains": "error"}
+    ]
+  },
+  {
+    "id": "files-10",
+    "title": "Home Layout",
+    "difficulty": "intermediate",
+    "xp": 60,
+    "mission": "Create bin/, src/, and a hello.txt that says hello inside src/.",
+    "setup": [],
+    "hints": [
+      "mkdir bin src",
+      "echo hello > src/hello.txt"
+    ],
+    "checks": [
+      {"type": "dir", "path": "bin"},
+      {"type": "dir", "path": "src"},
+      {"type": "file", "path": "src/hello.txt"},
+      {"type": "content", "path": "src/hello.txt", "equals": "hello\n"}
+    ]
+  }
+]
