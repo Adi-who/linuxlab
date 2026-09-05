@@ -5,5 +5,8 @@ __pycache__/
 .venv/
 venv/
 
-# LinuxLab's local progress data should never be committed
 .linuxlab/
+
+*.egg-info/
+dist/
+build/

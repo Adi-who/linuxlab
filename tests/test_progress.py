@@ -1,18 +1,15 @@
-"""
-tests/test_progress.py
+"""Progress, XP, streaks, achievements, and persistence tests."""
 
-Unit tests for core.progress. Uses a temporary directory so tests never
-touch the real ~/.linuxlab/ folder.
-"""
-
+import json
 import sys
 import tempfile
 import unittest
+from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from core.progress import ProgressManager, XP_PER_LEVEL  # noqa: E402
+from core.progress import ProgressManager, XP_PER_LEVEL
 
 
 class TestProgressManager(unittest.TestCase):
@@ -73,6 +70,69 @@ class TestProgressManager(unittest.TestCase):
             data_dir=self.manager.data_dir, progress_file=self.manager.progress_file
         )
         self.assertEqual(recovered.progress.xp, 0)
+        self.assertTrue(self.manager.progress_file.with_suffix(".json.bak").exists())
+
+    def test_category_progress_updates(self):
+        self.manager.mark_lesson_complete("Navigation", "pwd")
+        self.manager.mark_lesson_complete("Navigation", "ls")
+        self.assertEqual(self.manager.category_percent("Navigation", total=3), 66)
+        self.assertIn("pwd", self.manager.progress.lessons_completed["Navigation"])
+
+    def test_challenge_completion_is_idempotent(self):
+        first = self.manager.complete_challenge("files-1")
+        second = self.manager.complete_challenge("files-1")
+        self.assertTrue(first)
+        self.assertFalse(second)
+        self.assertEqual(self.manager.progress.challenges_completed, ["files-1"])
+
+    def test_practice_completion(self):
+        self.manager.complete_practice("mkdir-projects")
+        self.assertIn("mkdir-projects", self.manager.progress.practices_completed)
+
+    def test_streak_starts_at_one_on_first_visit(self):
+        self.assertEqual(self.manager.progress.streak, 1)
+        self.assertEqual(self.manager.progress.last_active, date.today().isoformat())
+
+    def test_consecutive_day_increments_streak(self):
+        yesterday = (date.today() - timedelta(days=1)).isoformat()
+        self.manager.progress.last_active = yesterday
+        self.manager.progress.streak = 3
+        self.manager._update_streak()
+        self.assertEqual(self.manager.progress.streak, 4)
+
+    def test_missed_day_resets_streak(self):
+        old = (date.today() - timedelta(days=3)).isoformat()
+        self.manager.progress.last_active = old
+        self.manager.progress.streak = 9
+        self.manager._update_streak()
+        self.assertEqual(self.manager.progress.streak, 1)
+
+    def test_same_day_does_not_double_count_streak(self):
+        self.manager.progress.streak = 2
+        self.manager._update_streak()
+        self.assertEqual(self.manager.progress.streak, 2)
+
+    def test_achievements_unlock(self):
+        unlocked = self.manager.unlock_achievement("first_quiz")
+        self.assertTrue(unlocked)
+        self.assertIn("first_quiz", self.manager.progress.achievements)
+        self.assertFalse(self.manager.unlock_achievement("first_quiz"))
+
+    def test_history_appends_events(self):
+        self.manager.log_event("quiz", {"score": 4, "total": 5})
+        self.manager.save()
+        history_path = self.manager.data_dir / "history.json"
+        self.assertTrue(history_path.exists())
+        events = json.loads(history_path.read_text(encoding="utf-8"))
+        self.assertEqual(events[-1]["kind"], "quiz")
+        self.assertEqual(events[-1]["score"], 4)
+
+    def test_progress_bar_clamps(self):
+        bar = self.manager.bar(7, 10, width=10)
+        self.assertEqual(len(bar), 10)
+        self.assertIn("█", bar)
+        empty = self.manager.bar(0, 10, width=10)
+        self.assertEqual(empty, "░" * 10)
 
 
 if __name__ == "__main__":

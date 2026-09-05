@@ -1,170 +1,207 @@
-# 🐧 LinuxLab
+# LinuxLab
+
 ### Interactive Linux Learning Environment
 
-> Learn Linux. Practice commands. Complete challenges. Build real terminal skills.
+Learn Linux. Practice commands. Complete challenges. Build real terminal skills.
 
-**Current version: 0.1 (MVP)** — see [Roadmap](#roadmap) for where this is headed.
+**Current version: 0.4** — a working learning loop with lessons, guided practice, a safe sandbox, quizzes, and persistent progress.
 
 ---
 
-## 1. Project Overview
+## 1. Project overview
 
-LinuxLab is a terminal-based Linux learning app written in Python. It teaches
-Linux commands through short lessons and then tests retention with an
-interactive quiz, all while tracking XP and levels so progress feels
-tangible. It's built as a real, incrementally-shipped portfolio project
-rather than a single-sitting script.
+LinuxLab is a terminal-based Linux learning app written in Python. It teaches beginner commands through short lessons, then asks you to type the command, then sends you into a jailed sandbox to complete a realistic filesystem mission. Progress is stored locally as JSON.
+
+This is a portfolio-quality CLI product, not a one-file tutorial script.
 
 ## 2. Why LinuxLab?
 
-Most people learn Linux by memorizing commands from a cheat sheet and
-forgetting them a week later. LinuxLab pairs each concept with immediate
-practice and feedback — the same "learn, then do" loop that makes flashcard
-apps and coding platforms effective — but scoped to the terminal.
+Most people learn Linux by memorizing a cheat sheet and forgetting it a week later. LinuxLab uses a tighter loop:
 
-## 3. Features (V0.1)
+```
+Learn -> Practice -> Challenge -> Validate -> Earn XP -> Track Progress
+```
 
-- Clean, menu-driven CLI
-- **Learn mode** — 15 beginner Linux commands across 4 categories, explained
-  from zero (meaning, purpose, syntax, examples, related commands)
-- **Quiz mode** — 15-question multiple-choice bank, sampled randomly each run
-- **Progress tracking** — XP, levels, quiz accuracy, and daily streaks
-- **JSON persistence** — progress is saved to `~/.linuxlab/progress.json`
-  and reloaded automatically next time you run LinuxLab
-- Command lesson data lives in JSON, not hard-coded in Python, so new
-  commands can be added without touching the app logic
+You see the idea, type the command, then prove it against a real (but safe) filesystem.
+
+## 3. Features
+
+- Menu-driven CLI (`python3 linuxlab.py`)
+- **Learn** — beginner lessons loaded from JSON, explained from zero
+- **Practice** — guided tasks with expected-command matching
+- **Challenges** — missions inside `~/linuxlab-sandbox/`
+- **Quiz** — multiple-choice bank with explanations
+- **Progress** — XP, levels, streaks, category bars, achievements
+- **Safety** — only a small allow-list of commands; paths cannot leave the sandbox
+- Standard library only (Python 3.9+)
 
 ## 4. Demo
 
 ```
 ╔════════════════════════════╗
-║         🐧 LinuxLab        ║
+║         LinuxLab           ║
 ╚════════════════════════════╝
 
 1. Learn
-2. Quiz
-3. Progress
-4. Exit
+2. Practice
+3. Challenges
+4. Quiz
+5. Progress
+6. Exit
 
 Choose:
 ```
 
-*(Screenshots/GIF coming as the terminal UI is polished toward V1.0.)*
+Challenge example:
+
+```
+Mission:
+
+Create this structure:
+
+project/
+├── src/
+├── docs/
+└── README.md
+
+/$ mkdir project
+/$ mkdir project/src
+/$ mkdir project/docs
+/$ touch project/README.md
+/$ done
+
+PASS
++40 XP
+```
 
 ## 5. Installation
-
-LinuxLab requires only Python 3.9+ and the standard library — no
-dependencies to install for V0.1.
 
 ```bash
 git clone https://github.com/Adi-who/linuxlab.git
 cd linuxlab
+python3 linuxlab.py
 ```
+
+No extra packages are required for the current version.
 
 ## 6. Usage
 
 ```bash
-python linuxlab.py
+python3 linuxlab.py
+python3 linuxlab.py --help
+python3 linuxlab.py --sandbox /tmp/linuxlab-sandbox
 ```
 
-Navigate the menu with the number keys. Progress saves automatically when
-you exit or finish a quiz.
+Inside a challenge:
 
-## 7. Commands Covered (V0.1)
+- type normal beginner commands (`mkdir`, `touch`, `mv`, ...)
+- `hint` shows the next hint
+- `done` validates the filesystem
+- `quit` leaves the mission
+- `help` lists allowed commands
 
-| Category           | Commands                                              |
-|---------------------|--------------------------------------------------------|
-| Navigation          | `pwd`, `ls`, `cd`                                       |
-| Files & Directories | `mkdir`, `rmdir`, `touch`, `cp`, `mv`, `rm`              |
-| File Management     | `cat`, `head`, `tail`, `grep`, `find`                    |
-| Permissions         | `chmod`                                                  |
+LinuxLab never runs arbitrary shell pipelines. Pipes, `&&`, and absolute system paths are rejected.
+
+## 7. Commands covered
+
+| Category | Commands |
+| --- | --- |
+| Navigation | `pwd`, `ls`, `cd` |
+| Files & Directories | `mkdir`, `rmdir`, `touch`, `cp`, `mv`, `rm` |
+| File Management | `cat`, `head`, `tail`, `grep`, `find` |
+| Permissions | `chmod` |
+| Processes | `ps`, `top`, `kill` |
+| Networking | `ping`, `curl` |
+| Package Management | `apt` |
+| System Information | `whoami`, `uname`, `df`, `du` |
+| Git | `git status`, `git add`, `git commit` |
+
+The sandbox currently simulates the first four categories so practice stays safe.
 
 ## 8. Challenges
 
-Not yet implemented — the challenge engine and filesystem sandbox arrive in
-V0.2–V0.4 (see [Roadmap](#roadmap)).
+Ten filesystem missions ship in `challenges/`:
 
-## 9. Progress System
+- Starter Project
+- Backup Notes
+- Empty Drafts
+- Copy Then Rename
+- Clean the Trash
+- Write a README
+- Nested Workspace
+- Make it Executable
+- Log Hunt
+- Home Layout
 
-Progress is stored locally as JSON — nothing leaves your machine.
+Each challenge seeds files inside the sandbox, then validates the resulting tree (existence, location, content, permissions, counts).
+
+## 9. Progress system
+
+Progress stays on your machine:
 
 ```
 ~/.linuxlab/
-└── progress.json
+├── progress.json
+└── history.json
 ```
 
-```json
-{
-  "xp": 60,
-  "level": 1,
-  "quizzes_taken": 1,
-  "questions_correct": 2,
-  "questions_answered": 5,
-  "streak": 1,
-  "last_active": "2026-09-05"
-}
-```
+Tracked fields include XP, level, quiz accuracy, streaks, completed lessons, completed challenges, and achievements.
 
-Leveling up requires 100 XP per level; each correct quiz answer earns 30 XP.
+Leveling uses 100 XP per level. Typical rewards:
+
+- Lesson: +5 XP
+- Practice: +10 to +15 XP
+- Quiz answer: +30 XP
+- Challenge: +30 to +60 XP
 
 ## 10. Architecture
 
 ```
 linuxlab/
-│
-├── linuxlab.py          # CLI entry point and menu loop
-├── README.md
-├── requirements.txt
-├── LICENSE
-│
-├── commands/             # Lesson data (Learn mode)
-│   ├── navigation.json
-│   ├── files.json
-│   └── permissions.json
-│
-├── data/
-│   └── quiz_questions.json
-│
+├── linuxlab.py
+├── commands/            lesson JSON
+├── challenges/          mission JSON
+├── data/                quiz + practice JSON
 ├── core/
-│   ├── learn.py           # Loads & formats lessons
-│   ├── quiz.py             # Quiz engine
-│   └── progress.py         # XP/level/streak tracking + JSON persistence
-│
+│   ├── learn.py
+│   ├── practice.py
+│   ├── practice_mode.py
+│   ├── quiz.py
+│   ├── challenges.py
+│   ├── sandbox.py
+│   ├── validator.py
+│   ├── progress.py
+│   └── ui.py
 └── tests/
-    └── test_progress.py
 ```
 
-## 11. Tech Stack
+Lessons and missions live in JSON so new content can be added without rewriting Python.
 
-Python standard library only: `json`, `pathlib`, `dataclasses`, `unittest`.
-`rich` is planned as an optional dependency once the terminal UI is
-polished further — not added until it earns its place.
+## 11. Tech stack
+
+Python 3.9+ standard library: `argparse`, `pathlib`, `json`, `shutil`, `unittest`, `dataclasses`.
+
+`rich` is intentionally not a dependency yet.
 
 ## 12. Testing
 
 ```bash
-python -m unittest discover -s tests -v
+python3 -m unittest discover -s tests -v
 ```
 
-8 unit tests currently cover XP accumulation, leveling thresholds, accuracy
-calculation, save/reload persistence, and recovery from a corrupted
-progress file.
+GitHub Actions runs the same suite on Python 3.9, 3.11, and 3.12.
 
 ## 13. Roadmap
 
-- [x] **V0.1** — CLI menu, Learn mode, Quiz mode, basic progress, JSON persistence
-- [ ] **V0.2** — Challenge engine, categories, difficulty levels, answer validation
-- [ ] **V0.3** — Achievements, category-level progress bars, richer streak logic
-- [ ] **V0.4** — Safe filesystem sandbox, real filesystem challenges, state validation
-- [ ] **V1.0** — 50+ challenges, 100+ commands, polished terminal UI (Rich),
-      automated tests + GitHub Actions, screenshots/GIFs, contribution guide
+- [x] **V0.1** — CLI menu, Learn, Quiz, basic progress, JSON persistence
+- [x] **V0.2** — Challenge engine, categories, difficulty, validation, XP
+- [x] **V0.3** — Persistent XP, levels, accuracy, streaks, achievements
+- [x] **V0.4** — Safe sandbox, filesystem missions, state validation
+- [ ] **V1.0** — 50+ challenges, 100+ commands, richer UI, more tests
 
 ## 14. Contributing
 
-Contributions are welcome once the V0.2 challenge engine lands. For now,
-feel free to open issues for bugs or suggest additional beginner-friendly
-commands and quiz questions via pull request against the `commands/` or
-`data/` JSON files.
+See `CONTRIBUTING.md`.
 
 ## 15. License
 
