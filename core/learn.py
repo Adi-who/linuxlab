@@ -1,4 +1,4 @@
-"""Load and display JSON command lessons."""
+"""Load and display JSON command lessons, with optional sandbox try-it."""
 
 from __future__ import annotations
 
@@ -7,7 +7,9 @@ from pathlib import Path
 from typing import Callable, Dict, List
 
 from core.progress import ProgressManager
-from core.ui import choose, pause
+from core.sandbox import ALLOWED_COMMANDS, Sandbox
+from core.session import default_lab_files, print_result, seed_sandbox
+from core.ui import choose, confirm, pause
 
 COMMANDS_DIR = Path(__file__).resolve().parent.parent / "commands"
 PrintFn = Callable[[str], None]
@@ -65,15 +67,78 @@ def format_lesson(cmd: dict) -> str:
     return "\n".join(lines)
 
 
-def run_learn(
+def present_lesson(
+    cmd: dict,
     progress: ProgressManager,
+    sandbox_root: Path | None = None,
     input_fn: InputFn = input,
     print_fn: PrintFn = print,
+) -> None:
+    print_fn("\n" + format_lesson(cmd))
+    category = cmd.get("category", "Other")
+    name = cmd.get("command", "")
+    if progress.mark_lesson_complete(category, name):
+        leveled = progress.add_xp(5)
+        print_fn("\n+5 XP for completing this lesson")
+        if leveled:
+            print_fn(f"Level up! You are now level {progress.progress.level}")
+        progress.save()
+    first = name.split()[0] if name else ""
+    if sandbox_root is not None and first in ALLOWED_COMMANDS:
+        if confirm("\nTry this command in the sandbox? [Y/n] ", input_fn=input_fn):
+            _try_command(cmd, sandbox_root, input_fn, print_fn)
+            return
+    pause(input_fn=input_fn)
+
+
+def _try_command(
+    cmd: dict,
+    sandbox_root: Path,
+    input_fn: InputFn,
+    print_fn: PrintFn,
+) -> None:
+    sandbox = Sandbox(sandbox_root)
+    sandbox.reset()
+    seed_sandbox(sandbox, default_lab_files())
+    example = ""
+    examples = cmd.get("examples") or []
+    if examples:
+        example = examples[0]
+    print_fn(f"\nSandbox ready at {sandbox.virtual_cwd()}")
+    print_fn(sandbox.tree().rstrip("\n"))
+    if example:
+        print_fn(f"\nTry something like: {example}")
+    print_fn("Type 'quit' when you are done.")
+    while True:
+        try:
+            typed = input_fn(f"\n{sandbox.virtual_cwd()}$ ").strip()
+        except (EOFError, KeyboardInterrupt):
+            return
+        if not typed or typed.lower() in {"quit", "exit", "done", "back"}:
+            return
+        if typed.lower() == "tree":
+            print_fn(sandbox.tree().rstrip("\n"))
+            continue
+        print_result(sandbox.run(typed), print_fn)
+
+
+def run_learn(
+    progress: ProgressManager,
+    sandbox_root: Path | None = None,
+    input_fn: InputFn = input,
+    print_fn: PrintFn = print,
+    start_command: str | None = None,
 ) -> None:
     commands = load_all_commands()
     if not commands:
         print_fn("No lessons found. Check the commands/ folder.")
         return
+
+    if start_command:
+        match = next((c for c in commands if c.get("command") == start_command), None)
+        if match:
+            present_lesson(match, progress, sandbox_root, input_fn, print_fn)
+            return
 
     grouped = group_by_category(commands)
     preferred = [
@@ -108,11 +173,4 @@ def run_learn(
 
         category = categories[idx]
         for cmd in grouped[category]:
-            print_fn("\n" + format_lesson(cmd))
-            if progress.mark_lesson_complete(category, cmd.get("command", "")):
-                leveled = progress.add_xp(5)
-                print_fn("\n+5 XP for completing this lesson")
-                if leveled:
-                    print_fn(f"Level up! You are now level {progress.progress.level}")
-                progress.save()
-            pause(input_fn=input_fn)
+            present_lesson(cmd, progress, sandbox_root, input_fn, print_fn)

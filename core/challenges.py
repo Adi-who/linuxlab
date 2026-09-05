@@ -8,6 +8,7 @@ from typing import Callable
 
 from core.progress import ProgressManager
 from core.sandbox import Sandbox
+from core.session import print_result, seed_sandbox
 from core.ui import box, choose, confirm, pause
 from core.validator import validate
 
@@ -31,13 +32,17 @@ def load_challenges(folder: Path = CHALLENGES_DIR) -> list[dict]:
 
 
 def _seed(sandbox: Sandbox, files: list[dict]) -> None:
-    for item in files:
-        path = sandbox.resolve(item["path"])
-        path.parent.mkdir(parents=True, exist_ok=True)
-        if item.get("type") == "dir":
-            path.mkdir(parents=True, exist_ok=True)
-        else:
-            path.write_text(item.get("content", ""), encoding="utf-8")
+    seed_sandbox(sandbox, files)
+
+
+def play_challenge(
+    challenge: dict,
+    progress: ProgressManager,
+    sandbox_root: Path,
+    input_fn: InputFn = input,
+    print_fn: PrintFn = print,
+) -> None:
+    _play_challenge(challenge, progress, sandbox_root, input_fn, print_fn)
 
 
 def run_challenges(
@@ -99,7 +104,8 @@ def _play_challenge(
     hints = challenge.get("hints") or []
     hint_index = 0
     print_fn(f"\nSandbox ready. You are in {sandbox.virtual_cwd()}")
-    print_fn("Allowed commands: pwd ls cd mkdir rmdir touch cp mv rm cat head tail grep find chmod echo help")
+    print_fn("Allowed commands: pwd ls cd mkdir rmdir touch cp mv rm cat head tail grep find chmod echo tree help")
+    print_fn("Type real Linux commands. Then type 'done' to validate.")
 
     while True:
         try:
@@ -119,6 +125,14 @@ def _play_challenge(
                 hint_index += 1
             else:
                 print_fn("No more hints.")
+            continue
+        if lower == "tree":
+            print_fn(sandbox.tree().rstrip("\n"))
+            continue
+        if lower == "reset":
+            sandbox.reset()
+            _seed(sandbox, challenge.get("setup") or [])
+            print_fn("Sandbox reset.")
             continue
         if lower == "done":
             result = validate(sandbox, challenge.get("checks") or [])
@@ -147,8 +161,4 @@ def _play_challenge(
                 return
             continue
 
-        result = sandbox.run(typed)
-        if result.output:
-            print_fn(result.output.rstrip("\n"))
-        if not result.ok:
-            print_fn(result.error or "Command failed.")
+        print_result(sandbox.run(typed), print_fn)

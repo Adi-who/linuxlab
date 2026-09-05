@@ -1,4 +1,4 @@
-"""Guided practice tasks with expected-command validation."""
+"""Guided practice that runs real sandbox commands."""
 
 from __future__ import annotations
 
@@ -6,9 +6,11 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from core.practice import matches_command
 from core.progress import ProgressManager
-from core.ui import choose, pause
+from core.sandbox import Sandbox
+from core.session import print_result, seed_sandbox, tree_text
+from core.ui import box, choose, pause
+from core.validator import validate
 
 PRACTICE_FILE = Path(__file__).resolve().parent.parent / "data" / "practice.json"
 PrintFn = Callable[[str], None]
@@ -27,6 +29,7 @@ def load_practice(path: Path = PRACTICE_FILE) -> list[dict]:
 
 def run_practice(
     progress: ProgressManager,
+    sandbox_root: Path,
     input_fn: InputFn = input,
     print_fn: PrintFn = print,
 ) -> None:
@@ -48,54 +51,90 @@ def run_practice(
         idx = int(choice) - 1
         if idx == len(tasks):
             return
-        _run_task(tasks[idx], progress, input_fn, print_fn)
+        run_task(tasks[idx], progress, sandbox_root, input_fn, print_fn)
 
 
-def _run_task(
+def run_task(
     task: dict,
     progress: ProgressManager,
+    sandbox_root: Path,
+    input_fn: InputFn = input,
+    print_fn: PrintFn = print,
+) -> None:
+    print_fn("\n" + box("PRACTICE", width=28))
+    print_fn("\nTask:")
+    print_fn(task["prompt"])
+    print_fn("\nThis is a real sandbox. Type Linux commands, then type 'done'.")
+    print_fn("Commands: hint | tree | reset | done | quit")
+    _play(task, progress, sandbox_root, input_fn, print_fn)
+
+
+def _play(
+    task: dict,
+    progress: ProgressManager,
+    sandbox_root: Path,
     input_fn: InputFn,
     print_fn: PrintFn,
 ) -> None:
-    print_fn("\nPRACTICE\n")
-    print_fn("Current directory:")
-    print_fn(task.get("cwd", "/home/user/linuxlab"))
-    print_fn("\nTask:")
-    print_fn(task["prompt"])
-    print_fn("\nHint:")
-    print_fn(task.get("hint", ""))
-    print_fn("")
-    attempts = 0
+    sandbox = Sandbox(sandbox_root)
+    sandbox.reset()
+    seed_sandbox(sandbox, task.get("setup") or [])
+    if task.get("start"):
+        try:
+            sandbox.cwd = sandbox.resolve(task["start"])
+        except Exception:
+            sandbox.cwd = sandbox.root
+    hints = [task.get("hint", "")] + list(task.get("hints") or [])
+    hints = [h for h in hints if h]
+    hint_index = 0
+    print_fn(f"\nSandbox ready. You are in {sandbox.virtual_cwd()}")
+    print_fn(tree_text(sandbox).rstrip("\n"))
+
     while True:
         try:
-            answer = input_fn("$ ").strip()
+            typed = input_fn(f"\n{sandbox.virtual_cwd()}$ ").strip()
         except (EOFError, KeyboardInterrupt):
             print_fn("\nLeaving practice.")
             return
-        if answer.lower() in {"quit", "exit", "back"}:
+        if not typed:
+            continue
+        lower = typed.lower()
+        if lower in {"quit", "exit", "back"}:
             return
-        attempts += 1
-        if matches_command(answer, task.get("accepted") or []):
-            xp = int(task.get("xp", 10))
-            first = progress.complete_practice(task["id"])
-            leveled = False
-            if first:
-                leveled = progress.add_xp(xp)
-            print_fn("\nPASS")
-            print_fn("\nExpected:")
-            print_fn((task.get("accepted") or [answer])[0])
-            print_fn("\nYour answer:")
-            print_fn(answer)
-            if first:
-                print_fn(f"\n+{xp} XP")
+        if lower == "hint":
+            if hint_index < len(hints):
+                print_fn(f"Hint: {hints[hint_index]}")
+                hint_index += 1
             else:
-                print_fn("\nAlready completed — no extra XP")
-            if leveled:
-                print_fn(f"Level up! You are now level {progress.progress.level}")
-            progress.log_event("practice", {"id": task["id"]})
-            progress.save()
-            pause(input_fn=input_fn)
-            return
-        print_fn("Not quite. Try again, or type 'quit'.")
-        if attempts >= 2 and task.get("hint"):
-            print_fn(f"Hint: {task['hint']}")
+                print_fn("No more hints.")
+            continue
+        if lower == "tree":
+            print_fn(sandbox.tree().rstrip("\n"))
+            continue
+        if lower == "reset":
+            print_fn("Resetting sandbox...")
+            return _play(task, progress, sandbox_root, input_fn, print_fn)
+        if lower == "done":
+            result = validate(sandbox, task.get("checks") or [])
+            if result.ok:
+                xp = int(task.get("xp", 10))
+                first = progress.complete_practice(task["id"])
+                leveled = False
+                if first:
+                    leveled = progress.add_xp(xp)
+                    print_fn("\nPASS")
+                    print_fn(f"+{xp} XP")
+                else:
+                    print_fn("\nPASS — already completed, no extra XP")
+                if leveled:
+                    print_fn(f"Level up! You are now level {progress.progress.level}")
+                progress.log_event("practice", {"id": task["id"]})
+                progress.save()
+                pause(input_fn=input_fn)
+                return
+            print_fn("\nNot yet:")
+            for item in result.failed:
+                print_fn(f"  - {item}")
+            print_fn("Keep going, or type 'hint' / 'reset' / 'quit'.")
+            continue
+        print_result(sandbox.run(typed), print_fn)

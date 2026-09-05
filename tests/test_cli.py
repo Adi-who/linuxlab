@@ -29,6 +29,15 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn("LinuxLab", result.stdout)
 
+    def test_unknown_subcommand_fails(self):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "linuxlab.py"), "not-a-mode"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertNotEqual(result.returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

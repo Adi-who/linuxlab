@@ -26,10 +26,11 @@ ALLOWED_COMMANDS = {
     "grep",
     "find",
     "chmod",
-    "echo",
-    "help",
-    "clear",
-}
+        "echo",
+        "help",
+        "clear",
+        "tree",
+    }
 
 FORBIDDEN_ROOTS = {
     "etc",
@@ -73,6 +74,21 @@ class Sandbox:
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.cwd = self.root
+        self.history: list[str] = []
+
+    def tree(self) -> str:
+        lines = ["/"]
+        def walk(path: Path, prefix: str) -> None:
+            children = sorted(path.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower()))
+            for index, child in enumerate(children):
+                last = index == len(children) - 1
+                connector = "└── " if last else "├── "
+                name = child.name + ("/" if child.is_dir() else "")
+                lines.append(prefix + connector + name)
+                if child.is_dir():
+                    walk(child, prefix + ("    " if last else "│   "))
+        walk(self.root, "")
+        return "\n".join(lines) + "\n"
 
     def virtual_cwd(self) -> str:
         rel = self.cwd.resolve().relative_to(self.root)
@@ -133,11 +149,14 @@ class Sandbox:
                 error=f"Command not allowed in the sandbox: {name}",
             )
         try:
-            return self._dispatch(name, tokens[1:], raw)
+            result = self._dispatch(name, tokens[1:], raw)
         except SandboxError as exc:
             return CommandResult(ok=False, error=str(exc))
         except OSError as exc:
             return CommandResult(ok=False, error=str(exc))
+        if result.ok:
+            self.history.append(raw)
+        return result
 
     def _dispatch(self, name: str, args: list[str], raw: str) -> CommandResult:
         handlers = {
@@ -159,6 +178,7 @@ class Sandbox:
             "echo": self._echo,
             "help": self._help,
             "clear": lambda _args: CommandResult(ok=True),
+            "tree": lambda _args: CommandResult(ok=True, output=self.tree()),
         }
         return handlers[name](args)
 

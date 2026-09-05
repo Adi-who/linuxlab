@@ -2,91 +2,109 @@
   {
     "id": "mkdir-projects",
     "title": "Create a folder",
-    "cwd": "/home/user/linuxlab",
     "prompt": "Create a folder named \"projects\".",
     "hint": "Which command creates a directory?",
-    "accepted": ["mkdir projects", "mkdir ./projects"],
-    "xp": 10
+    "xp": 10,
+    "setup": [],
+    "checks": [{"type": "dir", "path": "projects"}]
   },
   {
     "id": "pwd-now",
     "title": "Ask where you are",
-    "cwd": "/home/user/linuxlab",
-    "prompt": "Print the directory you are currently standing in.",
+    "prompt": "Print the directory you are currently standing in, then type done.",
     "hint": "Think: Print Working Directory.",
-    "accepted": ["pwd"],
-    "xp": 10
+    "xp": 10,
+    "setup": [],
+    "checks": [{"type": "history", "accepted": ["pwd"]}]
   },
   {
     "id": "ls-here",
     "title": "List this folder",
-    "cwd": "/home/user/linuxlab",
     "prompt": "List the files and folders in the current directory.",
     "hint": "The shortest listing command has two letters.",
-    "accepted": ["ls", "ls .", "ls ./"],
-    "xp": 10
+    "xp": 10,
+    "setup": [
+      {"path": "notes.txt", "type": "file", "content": "hello\n"}
+    ],
+    "checks": [{"type": "history", "accepted": ["ls", "ls .", "ls ./"]}]
   },
   {
     "id": "cd-docs",
     "title": "Move into Documents",
-    "cwd": "/home/user",
     "prompt": "Change into the Documents directory.",
     "hint": "cd means Change Directory.",
-    "accepted": ["cd Documents", "cd ./Documents"],
-    "xp": 10
+    "xp": 10,
+    "setup": [{"path": "Documents", "type": "dir"}],
+    "checks": [{"type": "cwd", "path": "/Documents"}]
   },
   {
     "id": "touch-notes",
     "title": "Create an empty file",
-    "cwd": "/home/user/linuxlab",
     "prompt": "Create an empty file named notes.txt.",
     "hint": "touch creates a file if it does not exist.",
-    "accepted": ["touch notes.txt"],
-    "xp": 10
+    "xp": 10,
+    "setup": [],
+    "checks": [{"type": "file", "path": "notes.txt"}]
   },
   {
     "id": "cp-backup",
     "title": "Copy a file",
-    "cwd": "/home/user/linuxlab",
     "prompt": "Copy notes.txt to backup.txt.",
     "hint": "cp source destination",
-    "accepted": ["cp notes.txt backup.txt"],
-    "xp": 10
+    "xp": 10,
+    "setup": [{"path": "notes.txt", "type": "file", "content": "keep me\n"}],
+    "checks": [
+      {"type": "file", "path": "notes.txt"},
+      {"type": "file", "path": "backup.txt"}
+    ]
   },
   {
     "id": "mv-archive",
     "title": "Move a file",
-    "cwd": "/home/user/linuxlab",
     "prompt": "Move notes.txt into the archive directory.",
     "hint": "mv can move a file into a folder.",
-    "accepted": ["mv notes.txt archive/", "mv notes.txt archive", "mv notes.txt archive/notes.txt"],
-    "xp": 10
+    "xp": 10,
+    "setup": [
+      {"path": "archive", "type": "dir"},
+      {"path": "notes.txt", "type": "file", "content": "archive me\n"}
+    ],
+    "checks": [
+      {"type": "file", "path": "archive/notes.txt"},
+      {"type": "missing", "path": "notes.txt"}
+    ]
   },
   {
     "id": "cat-readme",
     "title": "Read a file",
-    "cwd": "/home/user/linuxlab",
-    "prompt": "Print the entire contents of README.md.",
+    "prompt": "Print the entire contents of README.md, then type done.",
     "hint": "cat concatenates and prints files.",
-    "accepted": ["cat README.md"],
-    "xp": 10
+    "xp": 10,
+    "setup": [{"path": "README.md", "type": "file", "content": "Welcome to LinuxLab.\n"}],
+    "checks": [{"type": "history", "accepted": ["cat README.md"]}]
   },
   {
     "id": "grep-error",
     "title": "Search inside a file",
-    "cwd": "/home/user/linuxlab",
-    "prompt": "Search logfile.txt for the word error.",
+    "prompt": "Search logfile.txt for the word error, then type done.",
     "hint": "grep PATTERN FILE",
-    "accepted": ["grep error logfile.txt", "grep \"error\" logfile.txt"],
-    "xp": 15
+    "xp": 15,
+    "setup": [
+      {"path": "logfile.txt", "type": "file", "content": "info started\nerror disk full\ninfo done\n"}
+    ],
+    "checks": [
+      {"type": "history", "accepted": ["grep error logfile.txt", "grep \"error\" logfile.txt"]}
+    ]
   },
   {
     "id": "chmod-script",
     "title": "Make a script executable",
-    "cwd": "/home/user/linuxlab",
-    "prompt": "Give execute permission to script.sh using chmod +x.",
+    "prompt": "Give execute permission to script.sh using chmod +x or chmod 755.",
     "hint": "chmod +x filename",
-    "accepted": ["chmod +x script.sh", "chmod a+x script.sh", "chmod u+x script.sh"],
-    "xp": 15
+    "xp": 15,
+    "setup": [{"path": "script.sh", "type": "file", "content": "#!/bin/sh\necho hello\n"}],
+    "checks": [
+      {"type": "file", "path": "script.sh"},
+      {"type": "executable", "path": "script.sh"}
+    ]
   }
 ]

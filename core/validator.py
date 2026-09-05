@@ -35,6 +35,10 @@ def _run_check(sandbox: Sandbox, check: dict) -> str | None:
         "permissions": _check_permissions,
         "command": _check_command,
         "location": _check_file,
+        "cwd": _check_cwd,
+        "history": _check_history,
+        "output_contains": _check_output_contains,
+        "executable": _check_executable,
     }
     handler = handlers.get(kind)
     if handler is None:
@@ -111,7 +115,47 @@ def _check_permissions(sandbox: Sandbox, check: dict) -> str | None:
 
 def _check_command(sandbox: Sandbox, check: dict) -> str | None:
     given = check.get("given", "")
+    if not given and sandbox.history:
+        given = sandbox.history[-1]
     accepted = check.get("accepted", [])
     if not matches_command(given, accepted):
         return "Command did not match the expected answer"
+    return None
+
+
+def _check_cwd(sandbox: Sandbox, check: dict) -> str | None:
+    expected = check.get("path", "/")
+    if not expected.startswith("/"):
+        expected = "/" + expected
+    actual = sandbox.virtual_cwd()
+    if actual.rstrip("/") != expected.rstrip("/") and not (
+        expected in ("/", "") and actual == "/"
+    ):
+        return f"Expected current directory {expected}, you are in {actual}"
+    return None
+
+
+def _check_history(sandbox: Sandbox, check: dict) -> str | None:
+    accepted = check.get("accepted", [])
+    if any(matches_command(item, accepted) for item in sandbox.history):
+        return None
+    return "Expected command was not run in this session"
+
+
+def _check_executable(sandbox: Sandbox, check: dict) -> str | None:
+    import stat as statmod
+
+    path = _resolve(sandbox, check.get("path", ""))
+    if path is None or not path.exists():
+        return f"Expected path: {check.get('path')}"
+    if not path.stat().st_mode & statmod.S_IXUSR:
+        return f"{check.get('path')} is not executable"
+    return None
+
+
+def _check_output_contains(sandbox: Sandbox, check: dict) -> str | None:
+    needle = check.get("contains", "")
+    blob = "\n".join(sandbox.history)
+    if needle and needle not in blob:
+        return f"Expected to have used something containing {needle!r}"
     return None

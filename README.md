@@ -4,7 +4,7 @@
 
 Learn Linux. Practice commands. Complete challenges. Build real terminal skills.
 
-**Current version: 0.4** — a working learning loop with lessons, guided practice, a safe sandbox, quizzes, and persistent progress.
+**Current version: 1.0** — a working terminal product. You type real Linux commands in a jailed sandbox, the filesystem changes, and LinuxLab validates the result.
 
 ---
 
@@ -27,12 +27,14 @@ You see the idea, type the command, then prove it against a real (but safe) file
 ## 3. Features
 
 - Menu-driven CLI (`python3 linuxlab.py`)
-- **Learn** — beginner lessons loaded from JSON, explained from zero
-- **Practice** — guided tasks with expected-command matching
+- **Continue** — picks the next unfinished lesson, practice, or challenge
+- **Learn** — beginner lessons, then optional try-it in the sandbox
+- **Practice** — guided tasks that run real sandbox commands (`mkdir` actually creates a folder)
 - **Challenges** — missions inside `~/linuxlab-sandbox/`
+- **Lab** — free-play terminal with a starter home layout
 - **Quiz** — multiple-choice bank with explanations
 - **Progress** — XP, levels, streaks, category bars, achievements
-- **Safety** — only a small allow-list of commands; paths cannot leave the sandbox
+- **Safety** — allow-listed commands only; paths cannot leave the sandbox
 - Standard library only (Python 3.9+)
 
 ## 4. Demo
@@ -42,12 +44,14 @@ You see the idea, type the command, then prove it against a real (but safe) file
 ║         LinuxLab           ║
 ╚════════════════════════════╝
 
-1. Learn
-2. Practice
-3. Challenges
-4. Quiz
-5. Progress
-6. Exit
+1. Continue
+2. Learn
+3. Practice
+4. Challenges
+5. Lab
+6. Quiz
+7. Progress
+8. Exit
 
 Choose:
 ```
@@ -88,7 +92,9 @@ No extra packages are required for the current version.
 
 ```bash
 python3 linuxlab.py
-python3 linuxlab.py --help
+python3 linuxlab.py continue
+python3 linuxlab.py lab
+python3 linuxlab.py practice
 python3 linuxlab.py --sandbox /tmp/linuxlab-sandbox
 ```
 
@@ -169,6 +175,8 @@ linuxlab/
 │   ├── quiz.py
 │   ├── challenges.py
 │   ├── sandbox.py
+│   ├── session.py
+│   ├── lab.py
 │   ├── validator.py
 │   ├── progress.py
 │   └── ui.py
@@ -197,7 +205,7 @@ GitHub Actions runs the same suite on Python 3.9, 3.11, and 3.12.
 - [x] **V0.2** — Challenge engine, categories, difficulty, validation, XP
 - [x] **V0.3** — Persistent XP, levels, accuracy, streaks, achievements
 - [x] **V0.4** — Safe sandbox, filesystem missions, state validation
-- [ ] **V1.0** — 50+ challenges, 100+ commands, richer UI, more tests
+- [x] **V1.0** — Real sandbox practice, free Lab, Continue path, CLI subcommands, tests
 
 ## 14. Contributing
 
