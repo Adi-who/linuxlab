@@ -87,6 +87,52 @@
     "question": "Which command changes a file's read/write/execute permissions?",
     "options": {"A": "chmod", "B": "chown", "C": "sudo", "D": "cp"},
     "answer": "A",
-    "explanation": "chmod -> Change Mode"
+    "explanation": "chmod -> Change Mode",
+    "category": "Permissions"
+  },
+  {
+    "question": "What does mkdir -p do?",
+    "options": {
+      "A": "Deletes a directory",
+      "B": "Creates nested directories if they do not exist",
+      "C": "Prints the working directory",
+      "D": "Changes file permissions"
+    },
+    "answer": "B",
+    "explanation": "mkdir -p creates parent folders as needed.",
+    "category": "Files & Directories"
+  },
+  {
+    "question": "Which command shows running processes?",
+    "options": {"A": "ls", "B": "ps", "C": "cat", "D": "chmod"},
+    "answer": "B",
+    "explanation": "ps -> Process Status",
+    "category": "Processes"
+  },
+  {
+    "question": "Which command prints your username?",
+    "options": {"A": "whoami", "B": "pwd", "C": "uname", "D": "ls"},
+    "answer": "A",
+    "explanation": "whoami prints the current user.",
+    "category": "System Information"
+  },
+  {
+    "question": "Which Git command shows changed and untracked files?",
+    "options": {"A": "git add", "B": "git commit", "C": "git status", "D": "git clone"},
+    "answer": "C",
+    "explanation": "git status shows the working tree state.",
+    "category": "Git"
+  },
+  {
+    "question": "Why does LinuxLab run challenges in a sandbox?",
+    "options": {
+      "A": "To make commands faster",
+      "B": "To keep practice from changing real system files",
+      "C": "To connect to the internet",
+      "D": "To install packages"
+    },
+    "answer": "B",
+    "explanation": "The sandbox is a safe practice filesystem.",
+    "category": "Safety"
   }
 ]

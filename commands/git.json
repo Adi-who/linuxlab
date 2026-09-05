@@ -1,0 +1,32 @@
+[
+  {
+    "command": "git status",
+    "category": "Git",
+    "meaning": "Show the working tree status",
+    "description": "Tells you which files Git is tracking, which files changed, and which files are staged for the next commit.",
+    "syntax": "git status",
+    "examples": ["git status"],
+    "related": ["git add", "git commit"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "git add",
+    "category": "Git",
+    "meaning": "Stage changes",
+    "description": "Puts files into the staging area so they will be included in the next commit. Think of it as packing a box before you ship it.",
+    "syntax": "git add [path]",
+    "examples": ["git add README.md", "git add ."],
+    "related": ["git status", "git commit"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "git commit",
+    "category": "Git",
+    "meaning": "Record a snapshot",
+    "description": "Saves a snapshot of the staged files with a short message explaining why the change exists.",
+    "syntax": "git commit -m \"message\"",
+    "examples": ["git commit -m \"feat: add learn mode\""],
+    "related": ["git add", "git status"],
+    "difficulty": "beginner"
+  }
+]

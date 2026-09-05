@@ -1,0 +1,42 @@
+[
+  {
+    "command": "whoami",
+    "category": "System Information",
+    "meaning": "Who am I?",
+    "description": "Prints the username you are logged in as. Useful when you share a machine or switch accounts.",
+    "syntax": "whoami",
+    "examples": ["whoami"],
+    "related": ["pwd", "uname"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "uname",
+    "category": "System Information",
+    "meaning": "Unix name",
+    "description": "Shows information about the operating system. uname -a prints a full snapshot.",
+    "syntax": "uname [options]",
+    "examples": ["uname", "uname -a"],
+    "related": ["whoami"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "df",
+    "category": "System Information",
+    "meaning": "Disk free",
+    "description": "Shows how much disk space is used and how much is still free. df -h is easier to read because it uses GB and MB.",
+    "syntax": "df [options]",
+    "examples": ["df -h"],
+    "related": ["du", "ls"],
+    "difficulty": "beginner"
+  },
+  {
+    "command": "du",
+    "category": "System Information",
+    "meaning": "Disk usage",
+    "description": "Shows how much space a file or folder is using. du -sh folder is a common one-liner.",
+    "syntax": "du [options] [path]",
+    "examples": ["du -sh .", "du -h documents"],
+    "related": ["df", "ls"],
+    "difficulty": "beginner"
+  }
+]

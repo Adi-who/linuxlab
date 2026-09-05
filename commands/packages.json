@@ -1,0 +1,13 @@
+[
+  {
+    "command": "apt",
+    "category": "Package Management",
+    "meaning": "Advanced Package Tool",
+    "description": "Installs, updates, and removes software on Debian and Ubuntu. You usually need administrator rights, so commands often start with sudo.",
+    "syntax": "apt [subcommand] [package]",
+    "examples": ["sudo apt update", "sudo apt install git"],
+    "related": ["dpkg"],
+    "difficulty": "beginner",
+    "tip": "Run apt update before installing so you see current package lists."
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "command": "ping",
+    "category": "Networking",
+    "meaning": "Test a network path",
+    "description": "Sends a tiny message to another computer and waits for a reply. If replies arrive, the network path is working.",
+    "syntax": "ping [host]",
+    "examples": ["ping -c 4 example.com"],
+    "related": ["curl"],
+    "difficulty": "beginner",
+    "tip": "Use -c so ping stops after a few tries instead of running forever."
+  },
+  {
+    "command": "curl",
+    "category": "Networking",
+    "meaning": "Client URL",
+    "description": "Talks to websites and APIs from the terminal. Beginners often use it to download a file or inspect a page.",
+    "syntax": "curl [url]",
+    "examples": ["curl https://example.com"],
+    "related": ["ping"],
+    "difficulty": "beginner"
+  }
+]
